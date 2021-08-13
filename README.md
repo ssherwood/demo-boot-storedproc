@@ -1,28 +1,31 @@
-# Demo Spring Boot Project (Postgres + escapeSyntaxCallMode)
+# Demo Spring Boot Project
+## Postgres using escapeSyntaxCallMode=callIfNoReturn
 
-This is a small demo project using both Functions and Stored Procedures in Postgres. Specifically,
-this project demonstrates some issues with using the `escapeSyntaxCallMode` that was added to the
-42.2.16+ Postgres driver.
+This is a small demo project using Postgres with the configuration setting `escapeSyntaxCallMode=callIfNoReturn`.
+The expected behavior is that the Postgres driver (above 42.2.16) will be able to differentiate calls
+to Stored Procedures and Functions without needing to make any coding changes.  In this case, using
+Spring Data JPA and leveraging the `@Procedure` annotation.
 
-The implication of using this feature was that by using the option `callIfNoReturn`, it would allow
-an existing project to be able to invoke either a Function or Procedure using the same semantics
-from the client (in the Spring Boot , and it would properly interpret the syntax based on if it was a function or not.
+This information has been derived from these specific sources:
 
-See more info here:
-
+- https://stackoverflow.com/questions/65696904/postgresql-11-stored-procedure-call-error-to-call-a-procedure-use-call-java
 - https://github.com/davecramer/pgjdbc/commit/77206015f9d46495505c1098faa7cabbee044284
 - https://jdbc.postgresql.org/documentation/publicapi/org/postgresql/jdbc/EscapeSyntaxCallMode.html
 - https://jdbc.postgresql.org/documentation/head/callproc.html
-- https://stackoverflow.com/questions/65696904/postgresql-11-stored-procedure-call-error-to-call-a-procedure-use-call-java
 
-In this project, you can see that there is a very basic function and procedure being created that are
-invoked via the Spring Data `@Repository` layer.  Using the `callIfNoReturn` flag, it successfully invokes
-the Procedure, but fails to interpret the function call (which clearly has a return).
+However, using the default versions of the Postgres driver derived from Spring Boot / Spring Data, it is
+apparent that something isn't working correctly with `callIfNoReturn`.  Specifically that calls to
+Functions aren't being detected as a call with a return and thus are not falling back to the default
+SELECT behavior.
 
-## Setup
+## Project Setup
 
-Apply these two sql blocks to your default Postgres database (this project assumes localhost and the
-default port):
+First, apply these two SQL blocks to your default Postgres database (this project assumes localhost and
+the default port):
+
+https://stackoverflow.com/questions/65696904/postgresql-11-stored-procedure-call-error-to-call-a-procedure-use-call-java
+https://www.postgresql.org/docs/12/sql-createfunction.html
+https://www.postgresql.org/docs/12/sql-createprocedure.html
 
 ```sql
 CREATE OR REPLACE FUNCTION add_func(arg1 int, arg2 int) RETURNS int AS $$
