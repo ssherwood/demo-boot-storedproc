@@ -53,12 +53,11 @@ public class DemoBootStoredProcApplication {
             var list = new ArrayList<DummyEntity>();
 
             try (Connection connection = jdbcTemplate.getDataSource().getConnection()) {
-                connection.setAutoCommit(false);
+                connection.setAutoCommit(false); // this is important!!!
 
                 try (CallableStatement callableStatement = connection.prepareCall("{call fetch_dummy(?)}")) {
                     callableStatement.setNull(1, Types.OTHER);
                     callableStatement.registerOutParameter(1, Types.REF_CURSOR);
-
                     callableStatement.execute();
 
                     try (ResultSet results = (ResultSet) callableStatement.getObject(1)) {
