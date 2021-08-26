@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityManager;
-import javax.persistence.ParameterMode;
-import javax.persistence.StoredProcedureQuery;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +34,16 @@ public class DemoBootStoredProcApplication {
             this.statesRepository = statesRepository;
             this.jdbcTemplate = jdbcTemplate;
             this.entityManager = entityManager;
+        }
+
+        @GetMapping("/err08003")
+        void getError08003() {
+            statesRepository.error08003();
+        }
+
+        @GetMapping("/err08006")
+        void getError08006() {
+            statesRepository.error08006();
         }
 
         @GetMapping("/add-func")

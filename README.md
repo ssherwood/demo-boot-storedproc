@@ -74,7 +74,6 @@ respective operation (meaning the function call works when in func mode and the 
 The interpretation of this behavior seems to indicate that the function, as defined, does not get seen as having a
 return type for some reason by the driver, and it does not escape the call properly.
 
-
 ### Additional Research on PostgreSQL INOUT refcursor
 
 First create a dummy table:
@@ -115,3 +114,29 @@ $body$ LANGUAGE 'plpgsql';
   - https://www.postgresql.org/docs/11/plpgsql-cursors.html (only shows functions)
   - https://www.sqlines.com/oracle-to-postgresql/return_sys_refcursor (only shows functions)
   - https://jdbc.postgresql.org/documentation/head/callproc.html#callfunc-resultset-refcursor (only functions)
+
+
+### Research on Hikari
+
+This is just a quick test to force specific errors from the database and see how Hikari handles them.  Hint, it resets
+the connection.
+
+Create these stored procedures, they don't do anything but raise exceptions.
+
+```sql
+create or replace procedure raise08003()
+as $body$
+begin
+  raise exception using errcode = 'connection_does_not_exist';
+end;
+$body$ language 'plpgsql';
+```
+
+```sql
+create or replace procedure raise08006()
+as $body$
+begin
+  raise exception using errcode = 'connection_failure';
+end;
+$body$ language 'plpgsql';
+```

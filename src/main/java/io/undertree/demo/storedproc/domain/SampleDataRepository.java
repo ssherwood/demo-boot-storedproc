@@ -14,4 +14,10 @@ public interface SampleDataRepository extends JpaRepository<DummyEntity, Integer
     @Procedure(value = "increment_proc")
         //@Query(value = "CALL increment_proc(:arg);", nativeQuery = true)
     Integer incrementProc(Integer arg);
+
+    @Procedure(value = "raise08003")
+    void error08003();
+
+    @Procedure(value = "raise08006")
+    void error08006();
 }
